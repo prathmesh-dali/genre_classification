@@ -1,7 +1,7 @@
 import mlflow
 import os
 import hydra
-from omegaconf import DictConfig, OmegaConf
+from omegaconf import DictConfig, OmegaConf, ListConfig
 
 
 # This automatically reads in the configuration
@@ -20,7 +20,7 @@ def go(config: DictConfig):
         # This was passed on the command line as a comma-separated list of steps
         steps_to_execute = config["main"]["execute_steps"].split(",")
     else:
-        assert isinstance(config["main"]["execute_steps"], list)
+        assert isinstance(config["main"]["execute_steps"], ListConfig)
         steps_to_execute = config["main"]["execute_steps"]
 
     # Download step
@@ -44,7 +44,7 @@ def go(config: DictConfig):
             "main",
             parameters={
                 "input_artifact": "raw_data.parquet:latest",
-                "artifact_name": "processed_data.csv",
+                "artifact_name": "preprocessed_data.csv",
                 "artifact_type": "processed_data",
                 "artifact_description": "Data after preprocessing"
             }
@@ -57,7 +57,7 @@ def go(config: DictConfig):
             "main",
             parameters={
                 "reference_artifact": config["data"]["reference_dataset"],
-                "sample_artifact": "processed_data.csv:latest",
+                "sample_artifact": "preprocessed_data.csv:latest",
                 "ks_alpha": config["data"]["ks_alpha"]
             }
         )
@@ -68,7 +68,7 @@ def go(config: DictConfig):
             os.path.join(root_path, "segregate"),
             "main",
             parameters={
-                "input_artifact": "processed_data.csv:latest",
+                "input_artifact": "preprocessed_data.csv:latest",
                 "artifact_root": "data",
                 "artifact_type": "segregated_data",
                 "test_size": config["data"]["test_size"],

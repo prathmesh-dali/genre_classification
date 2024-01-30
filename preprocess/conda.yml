@@ -5,6 +5,6 @@ channels:
 dependencies:
   - pandas=2.0.3
   - pip=23.3.2
-  - pyarrow=214.0.2
+  - pyarrow=14.0.2
   - pip:
       - wandb==0.16.2
